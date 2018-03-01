@@ -1,0 +1,97 @@
+
+			        0  1  2  3  4 
+
+			ROCK  PAPER  SCISSORS  LIZARD  SPOCK
+      
+This is the original Rock Paper Scissors logic: 
+Rock breaks Scissors, Scissors cut Paper, and Paper covers Rock.
+
+		TURN0 = P0
+		TURN1 = P1
+		RANGE < 0 <-> 4 >
+		CONSIDER P1 - P0;
+
+example p0=2, p1=1; thus (1-2) SUM=-1; therefore X-(-1) LOOKUP gives [0:1]; p1 has lost.
+				or,
+example2 p0=4, p1=0; thus (0-4) SUM=-4; therefore X-(-4) LOOKUP gives [1:0]; p1 has won.
+
+					LOOKUP TABLE FOR WIN MESSAGE
+				FOREACHXIN (0:4) [X-3:X-1:X+2:X+4] [1:0] [p1:p0]
+				FOREACHXIN (0:4) [X-4:X-2:X+1:X+3] [0:1] [p1:p0]
+					ELSE
+				FOREACHXIN (0:4) [X-0] [DRAW]
+
+
+This LOGIC is independent of login order. 
+
+There is no PLAYER1 and there is no PLAYER2. Instead,
+
+this logic relies on addressing to denote which player has selected from the BUTTON OBJECTS before 
+the OPPONENT has selected. Sneaky and, 
+
+YES although ROCK will beat SPOCK and yet SPOCK will beat PAPER; all the while PAPER will beat ROCK.
+
+Less convenient conceptual versions:
+	Addends and scheme:
+			or
+     L	11	4-0  4	14-10  4  p1LOSE
+     W	10	4-1  3  14-11  3  p1WIN
+     L	9	4-2  2  14-12  2  p1LOSE
+     W	8	4-3  1  14-13  1  p1WIN
+     D	7	4-4  0  14-14  0    DRAW
+
+     L	9	2-0  2  12-10  2  p1LOSE
+     W	8	2-1  1  12-11  1  p1WIN
+     D	7	2-2  0  12-12  0    DRAW
+     L	6	2-3 -1  12-13 -1  p1LOSE
+     W	5	2-4 -2  12-14 -2  p1WIN
+
+     D	7	0-0  0  10-10  0    DRAW
+     L	6	0-1 -1  10-11 -1  p1LOSE
+     W	5	0-2 -2  10-12 -2  p1WIN
+     L	4	0-3 -3  10-13 -3  p1LOSE
+     W	3	0-4 -4  10-14 -4  p1WIN
+
+	Flowing scheme:
+		{0101201012010120101201012}
+		{WLWLDWLWLDWLWLDWLWLDWLWLD}
+		{1234523456345674567856789}
+
+	Improper use of MODULO:
+			if: p0:2 p1:0 2-0+5=7%2	2 7	WIN
+			if: p0:3 p1:0 3-0+5=8%2	1 8	LOSE
+			if: p0:4 p1:0 4-0+5=9%2	2 9	WIN
+
+			if: p0:0 p1:1 0-1+5=4%5	2 4	WIN
+			if: p0:1 p1:1 1-1+5=5%5	0 5	DRAW
+			if: p0:2 p1:1 2-1+5=6%5	1 6	LOSE
+			if: p0:3 p1:1 3-1+5=7%5	2 7	WIN
+			if: p0:4 p1:1 4-1+5=8%5	1 8	LOSE
+
+			if: p0:0 p1:2 0-2+5=3%5	1 3	LOSE
+			if: p0:1 p1:2 1-2+5=4%5	2 4	WIN
+			if: p0:2 p1:2 2-2+5=5%5	0 5	DRAW
+			if: p0:3 p1:2 3-2+5=6%5	1 6	LOSE
+			if: p0:4 p1:2 4-2+5=7%5	2 7	WIN
+
+			if: p0:0 p1:3 0-3+5=2%5	2	WIN
+			if: p0:1 p1:3 1-3+5=3%5	1	LOSE
+			if: p0:2 p1:3 2-3+5=4%5	2	WIN
+			if: p0:3 p1:3 3-3+5=5%5	0	DRAW
+			if: p0:4 p1:3 4-3+5=6%5	1	LOSE
+
+			if: p0:0 p1:4 0-4+5=1%5	1	LOSE
+			if: p0:1 p1:4 1-4+5=2%5	2	WIN
+			if: p0:2 p1:4 2-4+5=3%5	1	LOSE
+			if: p0:3 p1:4 3-4+5=4%5	2	WIN
+			if: p0:4 p1:4 4-4+5=5%5	0	DRAW
+
+	When p1 is x, y value gives:
+		x  y...
+		0 {0:DRAW,1:0,2:1,3:0,4:1}
+		1 {0:1,1:DRAW,2:0,3:1,4:0}
+		2 {0:0,1:1,2:DRAW,3:0,4:1}
+		3 {0:1,1:0,2:1,3:DRAW,4:0}
+		4 {0:0,1:1,2:0,3:1,4:DRAW}
+
+Jonathan Engwall 2018 <engwalljonathanthereal@gmail.com>
