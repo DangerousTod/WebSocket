@@ -1,0 +1,111 @@
+//
+// Jonathan Engwall <engwalljonathanthereal@mgail.com>
+// kali docker node ws socket.io express 2018
+//
+// I found much of the code I think I will need at: 
+// https://github.com/ericterpstra/anagrammatix/
+// blob/master/agxgame.js
+// A telnet or text adventure game will be rebound 
+// to a high port where it will be accessed via 
+// a boring QML signal-slot interface. The set up
+// is not boring, stop me if this goes too far:
+// x-------------------docker---------------------x
+// https>authentication>websocket client>kaliLinuxA
+// >websocket server>mailer>telnet/text>kaliLinuxB
+// x-------------------docker---------------------x
+
+var io;
+var gameSocket;
+var message;
+var id;
+exports.initGame(sio, socket){
+  io = sio;
+  gameSocket = socket;
+  gameSocket.emit('connected', { message: "begin game instructions" });
+
+// Host Events
+  gameSocket.on('hostCreateNewGame', hostCreateNewGame);
+  gameSocket.on('hostSendMessage', hostSendMessage);
+  gameSocket.on('hostRecreateGame', hostRecreateGame);
+
+// Player Event
+  gameSocket.on('playerClickStart', playerClickStart);
+  gameSocket.on('playerClickQuit', playerClickQuit);
+  gameSocket.on('playerRestart', playerRestart);
+}
+function hostCreateNewGame() { while (1) {
+  function hostSendMessage(){
+    println("Do you remember your gameId"\n"yes or no?");
+    if(%1 === yes){
+      function hostRecreateGame(gameId){
+        var sock = this;
+        var data = {
+        mySocketId : sock.id
+        gameId : gameId
+      };
+      io.sockets.in(data.gameId).emit('welcomeBack', data);
+    }
+  }  }
+// Unique Id
+  var thisGameId = ( Math.random() * 99019 ) | 0;
+// Return GameId and SocketID to the browser client
+  this.emit('newGameCreated', {gameId: thisGameId, mySocketId: this.id});
+// Join
+  this.join(thisGameId.toString());
+};
+
+function hostStartGame(gameId){
+  console.log('This is gameId: ' + data.gameId);
+  sendMessage(0,gameId);
+};
+
+// Often a player instruction to the server will fail 
+// or lead to confusion, the server cannot simply 
+// bounce text back and forth though that is the goal.
+// The Game will Handle instructions passing them back.
+
+function playerJoinGame(data){
+  console.log('Player ' + data.playerName + 'attempting to join game: ' + data.gameId )
+  var sock = this;
+  var game = gameSocket.manager.records.gameIds["/" + data.gameId];
+
+  if( gameId != undefined ){
+    data.mySocketId = sock.id;
+    sock.join(data.gameId);
+    io.sockets.in(data.gameId).emit('welcomeBack', data);
+  } else {
+    this.emit('error',{message: "This gameId is not recorded."} );
+  }
+}
+function playerMessage(data){
+  io.sockets.in(data.gameId).emit('hostCheckMessage', data);
+}
+function playerRestart(data){
+  data.playerId = this.id;
+  io.sockets.in(data.gameId).emit('playerRestarted',data);
+}
+function hostMessage(wordPool, gameId){
+  var data = getWordData(wordPool);
+  io.sockets.in(data.gameId).emit('newWordPool', data);
+}
+// Here is a SignalSlot arrangement
+//
+// wordPool -> ServerTextOutPutItem
+// playerMessage -> PlayerTextInputItem
+//
+// Start -> player button function
+// Quit -> player button function
+// 
+// hostCheckMessage -> ServerHandler
+//
+// exit and quit should be easy to slot but...
+// what about death???
+function hostMessage(wordPool, gameId){
+  if(getWordData(wordPool) === (""\%x""{sed = 1/"(Death Text)"/1){
+    function hostSendMessage(){
+      io.sockets.in(data.gameId).emit('death', data);
+    }
+  close connection
+  }
+exit
+}
